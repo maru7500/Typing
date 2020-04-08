@@ -5,6 +5,7 @@
     'apple',
     'orange',
     'banana',
+    '',
     ];
 
     let word;
@@ -15,7 +16,13 @@
     let startTime;
     let isPlaying = false;
     let num = 0;
-    let passSec;
+    let time;
+    let msec = 0;
+    let sec  = 0;
+    let min  = 0;
+    let msecNumber
+    let secNumber
+    let minNumber
 
     const target = document.getElementById('target');
     const scoreLabel = document.getElementById('score');
@@ -33,30 +40,30 @@
         target.textContent = placeholder + word.substring(loc);
     }
 
-    // タイマー
-    function updateTimer() {
-        // timeLeft=残り時間.
-        const timeLeft = startTime + timeLimit - Date.now();
-        // toFixed(2)で小数第2位まで表示する
-        timerLabel.textContent = (timeLeft / 1000).toFixed(2);
+    // カウントタイマー
+    // function updateTimer() {
+    //     // timeLeft=残り時間.
+    //     const timeLeft = startTime + timeLimit - Date.now();
+    //     // toFixed(2)で小数第2位まで表示する
+    //     timerLabel.textContent = (timeLeft / 1000).toFixed(2);
 
-        const timeoutId = setTimeout(() => {
-            updateTimer();
-        }, 10);
+    //     const timeoutId = setTimeout(() => {
+    //         updateTimer();
+    //     }, 10);
 
-        // タイムアップになったときisPlayingをfalseに変える
-        if (timeLeft < 0) {
-            isPlaying = false;
+    //     // タイムアップになったときisPlayingをfalseに変える
+    //     if (timeLeft < 0) {
+    //         isPlaying = false;
 
-            // setTimeout()を解除。タイマー表記を0.00に。0.1秒後にshowResult発火？。
-            clearTimeout(timeoutId);
-            timerLabel.textContent = '0.00';
-            setTimeout(() => {
-                showResult();
-            }, 100);
-        target.textContent = 'click to replay';
-        }
-    }
+    //         // setTimeout()を解除。タイマー表記を0.00に。0.1秒後にshowResult発火？。
+    //         clearTimeout(timeoutId);
+    //         timerLabel.textContent = '0.00';
+    //         setTimeout(() => {
+    //             showResult();
+    //         }, 100);
+    //     target.textContent = 'click to replay';
+    //     }
+    // }
 
     // アラートにて結果発表
     function showResult() {
@@ -65,10 +72,43 @@
     }
 
     function showPassage() {
-        PassSec++;   // カウントアップ
-        var msg = "ボタンを押してから " + PassSec + "秒が経過しました。";   // 表示文作成
-        document.getElementById("timer").innerHTML = msg;   // 表示更新
-     }
+
+            msec += 1;
+        if (msec > 99) {
+            msec = 0;
+            sec += 1;
+        }
+        if (sec > 59) {
+            sec = 0;
+            min += 1;
+        }
+        if (min > 59) {
+            min = 0;
+            hour += 1;
+        }
+    
+        // ミリ秒
+        msecNumber = msec;
+        if (msec < 10){
+            msecNumber = '0' + msec.toString();
+        } else {
+            msecNumber = msec;
+        }
+        // 秒
+        if (sec < 10) {
+            secNumber = '0' + sec.toString();
+        } else {
+            secNumber = sec;
+        }
+        // 分
+        if (min < 10) {
+            minNumber = '0' + min.toString();
+        } else {
+            minNumber = min;
+        }
+
+        timerLabel.textContent = minNumber + ':' + secNumber + ':' + msecNumber;   // 表示更新
+    }
 
     // クリックした時に発火
     // タイピングスタート
@@ -96,8 +136,15 @@
         // target部に表示
         target.textContent = word;
         
+        // タイマーのリセット
+        msec = 0;
+        // タイマー開始
+        time = setInterval(() => {
+            showPassage();
+        } ,10);
+
         // startTime = Date.now();
-        updateTimer();
+        // updateTimer();
     });
 
     // keydownでキーボードを押した瞬間イベントが発火
@@ -132,3 +179,4 @@
         }
     });
 }
+
